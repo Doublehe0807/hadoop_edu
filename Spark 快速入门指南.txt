@@ -1,0 +1,38 @@
+spark 快速入门指南
+1. Spark 安装详细步骤：
+https://www.cnblogs.com/tijun/p/7561718.html	
+
+2. 安装好Spark 进行配置
+1.  vi $SPARK_HOME/conf/spark-env.sh
+    更新如下参数：
+	JAVA_HOME=/home/hadoop/jdk1.8.0_144 (根据实际环境)
+    SCALA_HOME=/home/hadoop/scala-2.11.0 （根据实际环境）
+HADOOP_HOME=/home/hadoop/hadoop260 
+HADOOP_CONF_DIR=/home/hadoop/hadoop260/etc/hadoop
+SPARK_MASTER_HOST=ubantu (根据实际情况)
+SPARK_MASTER_PORT=7077
+SPARK_MASTER_WEBUI_PORT=8080
+SPARK_WORKER_CORES=1
+SPARK_WORKER_MEMORY=2g   #spark里许多用到内存的地方默认1g 2g 这里最好设置大与1g
+SPARK_WORKER_PORT=7078
+SPARK_WORKER_WEBUI_PORT=8081
+SPARK_WORKER_INSTANCES=1
+
+2.2 更新spark-defaults.conf  
+spark.master    spark://yarn001:7077 (这个值，需要在spark 启动以后，打开spark web URL,查询实际的Spark URL,这里的值需要与实际的URL 保持一致， Spark-shell 会根据这里设定的值去连接spark)
+ 
+
+
+3. 已安装好Spark， 进行启动
+sbin/start-all.sh
+sbin/stop-all.sh
+可以通过web 程序访问spark,基于我本机的host， 通过以下link 访问
+http://yarn001:8080
+
+4. 启动spark shell
+Spark shell 是通过shell 命令行来和spark 交互
+3.1 python spark shell
+bin/pyspark
+
+3.2 scala 版本的spark shell
+spark://yarn001:7077 (这个值与web UI 显示的值一致)

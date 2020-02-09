@@ -1,0 +1,93 @@
+HBase-->③ HBase 伪分布式部署
+
+HBase伪分布式部署
+1.1  基础环境准备
+·      openjdk -1.8.0_191
+·      hadoop-2.7.4
+
+1.2  Zookeeper环境搭建
+	解压缩zookeeper 安装包到master，并建立基本目录
+	tar -zxvf zookeeper-3.4.10.tar.gz -C /usr/local
+	mv zookeeper-3.4.10 zookeeper 
+	mkdir /usr/local/zookeeper/data
+	mkdir /usr/local/zookeeper/logs
+修改master配置文件 
+    #复制配置文件模板
+    cp /usr/local/zookeeper/conf/zoo-sample.cfg /usr/local/zookeeper/conf/zoo.cfg
+    vim zoo.cfg
+    zoo.cfg修改如下：
+    tickTime=2000
+    initLimit=10
+    syncLimit=5
+    dataDir=/usr/local/zookeeper/data
+    clientPort=2181
+修改log4j.properties文件中log保存路径
+	zookeeper.root.logger=INFO, CONSOLE
+	zookeeper.console.threshold=INFO
+	zookeeper.log.dir=/usr/local/zookeeper/logs
+	zookeeper.log.file=zookeeper.log
+	zookeeper.log.threshold=DEBUG
+	zookeeper.tracelog.dir=.
+	zookeeper.tracelog.file=zookeeper_trace.log
+	log4j.rootLogger=${zookeeper.root.logger}
+
+1.3  HBase 环境搭建
+解压缩HBase安装包
+	tar -zxvf hbase-1.2.5-bin.star.gz -C /usr/local
+	mv hbase-1.2.5-bin hbase
+	mkdir /usr/local/hbase/logs
+修改HBase启动时要使用的环境变量（hbase-env.sh）
+#打开环境变量配置文件
+	vim /usr/local/hbase/conf/hbase-env.sh
+	hbase-env.sh修改如下
+	export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk
+	export HBASE_LOG_DIR=${HBASE_HOME}/logs
+	export HBASE_PID_DIR=/var/hadoop/pids
+修改HBase集群的基本配置信息（hbase-site.xml）
+#打开配置文件
+	vim /usr/local/hbase/conf/hbase-site.xml
+	hbase-site.xml修改如下
+<configuration>
+    <property>
+        <name>hbase.rootdir</name>
+        <value>hdfs://localhost:9000/user/hbase</value>
+#根据core-site.xml中配置，确保hdfs中目标文件夹存在
+    </property>
+    <property>
+        <name>hbase.zookeeper.property.dataDir</name>
+        <value>/usr/local/zookeeper/data</value>
+#根据zoo.cfg中的dataDir配置
+   </property>
+    <property>
+        <name>hbase.cluster.distributed</name>
+        <value>true</value>
+#设置hbase模式为集群模式
+    </property>
+</configuration>
+
+1.4  启动服务
+#启动Hadoop
+$HADOOP_HOME/sbin/start-dfs.sh
+#启动zookeeper
+$ZOOKEEPER_HOME/bin/zkServer.sh start
+#启动HBase
+$HBASE_HOME/bin/start-hbase.sh
+#查看进程
+jps
+成功启动的进程如下
+2256 HRegionServer
+2352 Jps
+1568 NameNode
+2147 HMaster
+1671 DataNode
+2009 QuorumPeerMain
+1866 SecondaryNameNode
+
+相关链接
+· HBase 深入浅出
+https://www.ibm.com/developerworks/cn/analytics/library/ba-cn-bigdata-hbase/index.html
+· Apache HBase
+https://hbase.apache.org/book.html
+推荐链接
+·HBase教程
+https://www.yiibai.com/hbase

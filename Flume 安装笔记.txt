@@ -1,0 +1,39 @@
+flume 安装笔记
+1. 获取flume 安装包
+   在linux 虚拟机环境下：
+   wget http://apache.fayea.com/flume/1.7.0/apache-flume-1.7.0-bin.tar.gz
+   
+   tar -zxvf apache-flume-1.7.0-bin.tar.gz
+
+   
+   cd apache-flume-1.7.0-bin
+   
+2. 对conf 文件和bin 文件进行配置 (可以git 获取现成的source code 并对其进行配置来做实验）
+	git clone https://github.com/bigdataguide/hadooptraining  (需要安装git)
+	
+	创建dir 存放data 文件
+	/home/cindy/flume/recorddata
+	
+	编辑brand.py record.py  user.py 将data 目录指向新创建的/home/cindy/flume/recorddata
+	
+	编辑command.sh  将py文件的目录指向实际的py文件目录
+	
+	跑command.sh (前提本机安装python)
+
+	将github的 hadooptraining/flume/conf/ 下面的三个property file copy到flume的文件夹 /usr/local/apache-flume-1.7.0-bin/conf
+	
+	
+3. 编辑conf file，自定义flume的source，agent 和sink
+	1. 更改 LogAgent.sources.logSource.command = tail -F /home/cindy/flume/recorddata/record.list (监听目录下的record.list (由python 代码生成) 如果文件有新的内容加入则会出发flume的流程)
+	2. 更改 logAgent.sinks.hdfsSink.hdfs.path = hdfs://bigdata:9000/flume/record/%Y-%m-%d/%H%M
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+   
